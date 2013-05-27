@@ -3,10 +3,12 @@ class User < ActiveRecord::Base
   
   def fetch_tweets!
     self.tweets.delete_all
-    tweets = Twitter.user_timeline(self.username, :count => 10)
+    tweets = Twitter.user_timeline(self.username, :count => 200)
     tweets.each do |tweet|
       self.tweets << Tweet.create(text: tweet[:text])
     end
+    self.updated_at = Time.now
+    self.save
   end
 
   def tweets_stale?
